@@ -17,12 +17,14 @@ module.exports = {
     assetBundlePatterns: ["**/*"],
     ios: {
       supportsTablet: true,
+      bundleIdentifier: "com.mukho.ohmylasttransit",
       infoPlist: {
         NSLocationWhenInUseUsageDescription:
           "현재 위치에서 집까지의 막차 정보를 확인하기 위해 위치 정보가 필요합니다.",
       },
     },
     android: {
+      package: "com.mukho.ohmylasttransit",
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#FFFFFF",

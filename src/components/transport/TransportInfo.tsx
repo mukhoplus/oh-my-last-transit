@@ -38,7 +38,13 @@ export const TransportInfo = ({ type, start, end }: TransportInfoProps) => {
     );
   }
 
-  if (!data || !data[0]) return null;
+  if (!data || data.length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.message}>이용 가능한 경로가 없습니다</Text>
+      </View>
+    );
+  }
 
   const info = data.find((info) => info.type === type);
   const summary = info?.summary;
@@ -75,11 +81,11 @@ export const TransportInfo = ({ type, start, end }: TransportInfoProps) => {
           </Text>
         </View>
         <View style={styles.infoRow}>
-          <Text style={styles.label}>예상 요금</Text>
+          <Text style={styles.label}>예상 요금:</Text>
           <Text style={styles.value}>
-            {type === "TAXI"
-              ? `${summary.fare.taxi.toLocaleString()}원`
-              : `${info.cost.toLocaleString()}원`}
+            {Number(
+              summary.fare[type.toLowerCase() as keyof Fare]
+            ).toLocaleString("ko-KR") + " 원"}
           </Text>
         </View>
       </View>

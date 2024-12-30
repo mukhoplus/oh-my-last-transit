@@ -1,15 +1,19 @@
 export interface Location {
   name: string;
-  x: string;
-  y: string;
+  x: string; // 경도
+  y: string; // 위도
   address?: string;
 }
 
-export interface Section {
-  type: "WALK" | "BUS" | "SUBWAY";
-  name?: string;
-  distance?: number;
-  stations?: number;
+export interface Fare {
+  transit?: number;
+  taxi?: number;
+}
+
+export interface Summary {
+  distance: number;
+  duration: number;
+  fare: Fare;
 }
 
 export interface TransportInfo {
@@ -17,5 +21,5 @@ export interface TransportInfo {
   estimatedTime: number;
   cost: number;
   route?: string[];
-  summary?: any;
+  summary: Summary;
 }

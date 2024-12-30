@@ -32,7 +32,11 @@ export const AddressSearch = ({
         {isLoading ? (
           <ActivityIndicator size="small" color={COLORS.primary} />
         ) : (
-          <Text style={styles.address}>{address || "주소를 입력해주세요"}</Text>
+          <Text style={styles.address}>
+            {label === "현재 위치"
+              ? address || "현재 위치를 찾고 있습니다"
+              : address || "주소를 입력해주세요"}
+          </Text>
         )}
       </View>
     </TouchableOpacity>

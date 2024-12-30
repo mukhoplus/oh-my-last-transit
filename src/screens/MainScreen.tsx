@@ -17,9 +17,21 @@ export const MainScreen = () => {
   const [activeTab, setActiveTab] = useState<"PUBLIC" | "TAXI">("PUBLIC");
   const { getCurrentLocation, isLoading } = useLocation();
 
+  // 컴포넌트 마운트 시 초기 데이터 로드
   useEffect(() => {
-    loadHomeLocation();
-  }, []);
+    const initializeLocations = async () => {
+      try {
+        // 저장된 집 주소 로드
+        await loadHomeLocation();
+        // 현재 위치 자동 로드
+        await handleCurrentLocation();
+      } catch (error) {
+        console.error("위치 초기화 실패:", error);
+      }
+    };
+
+    initializeLocations();
+  }, []); // 컴포넌트 마운트 시 1회 실행
 
   const loadHomeLocation = async () => {
     try {
@@ -41,8 +53,14 @@ export const MainScreen = () => {
     try {
       const location = await getCurrentLocation();
       setCurrentLocation(location);
+      return location;
     } catch (error) {
-      Alert.alert("오류", "현재 위치를 가져오는데 실패했습니다.");
+      console.error("현재 위치 가져오기 실패:", error);
+      Alert.alert(
+        "위치 오류",
+        "현재 위치를 가져오는데 실패했습니다. 위치 권한을 확인해주세요."
+      );
+      return null;
     }
   };
 
