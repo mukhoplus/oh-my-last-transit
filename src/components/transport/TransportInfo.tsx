@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  ScrollView,
+} from "react-native";
 import { useTransportInfo } from "../../hooks/useTransportInfo";
 import { Location } from "../../types";
 import { COLORS } from "../../utils/constants";
@@ -58,52 +64,57 @@ export const TransportInfo = ({ type, start, end }: TransportInfoProps) => {
   }
 
   return (
-    <View style={styles.container}>
-      {/* 헤더 정보 */}
-      <View style={styles.header}>
-        <Text style={styles.title}>
-          {type === "PUBLIC" ? "🚇 대중교통" : "🚕 택시"}
-        </Text>
-      </View>
+    <ScrollView
+      style={styles.routeScrollView}
+      showsVerticalScrollIndicator={true}
+    >
+      <View style={styles.container}>
+        {/* 헤더 정보 */}
+        <View style={styles.header}>
+          <Text style={styles.title}>
+            {type === "PUBLIC" ? "🚇 대중교통" : "🚕 택시"}
+          </Text>
+        </View>
 
-      {/* 요약 정보 */}
-      <View style={styles.summaryContainer}>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>총 거리</Text>
-          <Text style={styles.value}>
-            {(summary.distance / 1000).toFixed(1)}km
-          </Text>
+        {/* 요약 정보 */}
+        <View style={styles.summaryContainer}>
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>총 거리</Text>
+            <Text style={styles.value}>
+              {(summary.distance / 1000).toFixed(1)}km
+            </Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>예상 소요 시간</Text>
+            <Text style={styles.value}>
+              {Math.round(summary.duration / 60)}분
+            </Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>예상 요금:</Text>
+            <Text style={styles.value}>
+              {Number(
+                summary.fare.transit || summary.fare.taxi || -1
+              ).toLocaleString("ko-KR") + " 원"}
+            </Text>
+          </View>
         </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>예상 소요 시간</Text>
-          <Text style={styles.value}>
-            {Math.round(summary.duration / 60)}분
-          </Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>예상 요금:</Text>
-          <Text style={styles.value}>
-            {Number(
-              summary.fare[type.toLowerCase() as keyof Fare]
-            ).toLocaleString("ko-KR") + " 원"}
-          </Text>
-        </View>
-      </View>
 
-      {/* 경로 정보 */}
-      {type === "PUBLIC" && info.route && info.route.length > 0 && (
-        <View style={styles.routeContainer}>
-          <Text style={styles.sectionTitle}>상세 경로</Text>
-          {info.route.map((step, index) => (
-            <View key={index} style={styles.routeStep}>
-              <Text style={styles.routeText}>
-                {index + 1}. {step}
-              </Text>
-            </View>
-          ))}
-        </View>
-      )}
-    </View>
+        {/* 경로 정보 */}
+        {type === "PUBLIC" && info.route && info.route.length > 0 && (
+          <View style={styles.routeContainer}>
+            <Text style={styles.sectionTitle}>상세 경로</Text>
+            {info.route.map((step, index) => (
+              <View key={index} style={styles.routeStep}>
+                <Text style={styles.routeText}>
+                  {index + 1}. {step}
+                </Text>
+              </View>
+            ))}
+          </View>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 
@@ -157,6 +168,10 @@ const styles = StyleSheet.create({
   },
   routeContainer: {
     marginTop: 8,
+    maxHeight: 300,
+  },
+  routeScrollView: {
+    flexGrow: 1,
   },
   routeStep: {
     marginTop: 8,

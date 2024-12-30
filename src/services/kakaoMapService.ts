@@ -1,5 +1,5 @@
 import { Location, TransportInfo } from "../types";
-import { KAKAO_MAP_API_KEY, ODSAY_API_KEY } from "../utils/apikey";
+import { KAKAO_MAP_API_KEY } from "../utils/apikey";
 
 export const searchRoute = async (
   start: Location,
@@ -51,7 +51,7 @@ const getPublicTransportRoute = async (
     const destinationY = end.y;
 
     const response = await fetch(
-      `https://api.odsay.com/v1/api/searchPubTransPathT?lang=0&SX=${originX}&SY=${originY}&EX=${destinationX}&EY=${destinationY}&apiKey=${ODSAY_API_KEY}`,
+      `http://127.0.0.1:3000/route?originX=${originX}&originY=${originY}&destinationX=${destinationX}&destinationY=${destinationY}`,
       {
         method: "GET",
         headers: {
@@ -61,63 +61,14 @@ const getPublicTransportRoute = async (
     );
 
     if (!response.ok) {
-      console.error(
-        "ODsay Public Transit API Error:",
-        response.status,
-        await response.text()
-      );
+      console.error("Mukho API Error:", response.status, await response.text());
       return null;
     }
 
     const data = await response.json();
     console.log("대중교통 응답 데이터:", JSON.stringify(data, null, 2));
 
-    if (data.result.info.count === 0) {
-      console.warn("대중교통 경로를 찾을 수 없습니다.");
-      return null;
-    }
-
-    const path = data.result.path[0]; // 첫 번째 경로 선택
-    const estimatedTime = path.info.totalTime; // 총 소요 시간 (초)
-    const distance = path.info.totalDistance; // 총 거리 (m)
-    const fare = path.info.totalFare || 0; // 총 요금
-
-    const transitSteps: string[] = [];
-    path.subPath.forEach((sub: any) => {
-      if (sub.subPathType === 1) {
-        // 지하철, 버스 등 대중교통
-        const transportType = sub.passStopList[0].stationName
-          ? "지하철"
-          : "버스";
-        const startStation =
-          sub.passStopList[0].stationName || sub.passStopList[0].posName;
-        const endStation =
-          sub.passStopList[sub.passStopList.length - 1].stationName ||
-          sub.passStopList[sub.passStopList.length - 1].posName;
-        const duration = Math.round(sub.trafficTime / 60); // 분 단위
-        const fareCost = sub.info.fare || 0;
-
-        transitSteps.push(
-          `${transportType} (${startStation} - ${endStation}) (${duration}분)`
-        );
-      } else if (sub.subPathType === 3) {
-        // 도보
-        const duration = Math.round(sub.walkTime / 60); // 분 단위
-        transitSteps.push(`도보 (${duration}분)`);
-      }
-    });
-
-    return {
-      type: "PUBLIC",
-      estimatedTime: Math.round(estimatedTime / 60),
-      cost: fare || 1250, // ODsay API가 요금을 제공하지 않을 경우 기본 요금
-      route: transitSteps,
-      summary: {
-        distance: distance,
-        duration: estimatedTime,
-        fare: { transit: fare || 1250 },
-      },
-    };
+    return data;
   } catch (error) {
     console.error("대중교통 경로 검색 에러:", error);
     return null;
