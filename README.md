@@ -28,3 +28,7 @@
 
 ![image](https://github.com/user-attachments/assets/eb95f0c4-d516-4be5-992c-26cd4948c765)
 ![image](https://github.com/user-attachments/assets/623e5c80-e99b-4f6e-a1f6-f55f76da8153)
+
+## 패치노트
+
+- `v0.1.0`: 2024-12-26 목 ~ 2024-12-31 화
